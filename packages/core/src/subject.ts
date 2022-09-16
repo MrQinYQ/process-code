@@ -1,27 +1,12 @@
 import { Subject, Subscriber, Subscription } from 'rxjs';
 
-interface NoInitValueInterface<T> {
-    get value(): T | undefined;
-    getValue(): T | undefined;
-}
+export class StateSubject<T> extends Subject<T> {
 
-interface HasInitValueInterface<T> {
-    get value(): T;
-    getValue(): T;
-}
-
-interface StateSubjectInterface<T> {
-    new (): NoInitValueInterface<T>;
-    new (value: T): HasInitValueInterface<T>;
-};
-
-class _StateSubject<T> extends Subject<T> {
-
-    constructor(private _value?: T) {
+    constructor(private _value: T) {
         super();
     }
   
-    get value(): T | undefined {
+    get value(): T {
         return this.getValue();
     }
   
@@ -33,7 +18,7 @@ class _StateSubject<T> extends Subject<T> {
         return subscription;
     }
   
-    getValue(): T | undefined {
+    getValue(): T {
         const { hasError, thrownError, _value } = this;
         if (hasError) {
             throw thrownError;
@@ -45,19 +30,5 @@ class _StateSubject<T> extends Subject<T> {
   
     next(value: T): void {
         super.next((this._value = value));
-    }
-}
-
-function CreateInstance<T>(value?: T) {
-    if (value === undefined) {
-        return new _StateSubject<T>() as NoInitValueInterface<T>;
-    } else {
-        return new _StateSubject<T>(value) as HasInitValueInterface<T>;
-    }
-}
-
-export const StateSubject = function createInstance<T>(value?: T) {
-    if (value === undefined) {
-        return 
     }
 }
